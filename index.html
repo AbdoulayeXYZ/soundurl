@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index - Sound URL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .sound-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .sound-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sound-card:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .sound-icon {
+            font-size: 2.5em;
+        }
+
+        .sound-info {
+            text-align: left;
+            flex: 1;
+        }
+
+        .sound-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .sound-desc {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .arrow {
+            font-size: 1.5em;
+        }
+
+        .info {
+            margin-top: 30px;
+            font-size: 0.9em;
+            opacity: 0.8;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎵 Sound URL</h1>
+        <p class="subtitle">Notifications Audio Wialon</p>
+
+        <div class="sound-list">
+            <a href="buzzer.html" class="sound-card">
+                <div class="sound-icon">🔊</div>
+                <div class="sound-info">
+                    <div class="sound-name">Buzzer</div>
+                    <div class="sound-desc">Son d'alerte buzzer</div>
+                </div>
+                <div class="arrow">→</div>
+            </a>
+
+            <a href="notification.html" class="sound-card">
+                <div class="sound-icon">🔔</div>
+                <div class="sound-info">
+                    <div class="sound-name">Notification</div>
+                    <div class="sound-desc">Son de notification</div>
+                </div>
+                <div class="arrow">→</div>
+            </a>
+        </div>
+
+        <div class="info">
+            💡 Cliquez sur un son pour déclencher sa lecture automatique
+        </div>
+    </div>
+</body>
+
+</html>

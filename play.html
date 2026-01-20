@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Player - Wialon</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            transition: background 0.5s ease;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 500px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .status {
+            font-size: 1.2em;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .icon {
+            font-size: 4em;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .info {
+            margin-top: 20px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid white;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-link {
+            margin-top: 20px;
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 id="title">🔔 Sound Player</h1>
+        <div class="icon" id="icon">🔊</div>
+        <div class="status" id="status">Chargement...</div>
+        <button id="playBtn" style="display: none;">Rejouer le son</button>
+        <div class="info" id="info">
+            Le son se déclenche automatiquement à l'ouverture de cette page
+        </div>
+        <a href="index.html" class="back-link">← Retour à l'accueil</a>
+    </div>
+
+    <audio id="audioPlayer" preload="auto"></audio>
+
+    <script>
+        // Configuration des sons disponibles
+        const soundConfig = {
+            buzzer: {
+                file: 'library/buzzer.mp3',
+                name: 'Buzzer',
+                icon: '🔊',
+                gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                description: 'Alerte buzzer'
+            },
+            notification: {
+                file: 'library/notification.mp3',
+                name: 'Notification',
+                icon: '🔔',
+                gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                description: 'Son de notification'
+            }
+        };
+
+        // Récupérer le paramètre 'sound' de l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const soundName = urlParams.get('sound');
+
+        const audio = document.getElementById('audioPlayer');
+        const status = document.getElementById('status');
+        const playBtn = document.getElementById('playBtn');
+        const title = document.getElementById('title');
+        const icon = document.getElementById('icon');
+        const info = document.getElementById('info');
+
+        // Vérifier si le son existe
+        if (!soundName || !soundConfig[soundName]) {
+            status.textContent = '❌ Son non trouvé';
+            status.style.background = 'rgba(244, 67, 54, 0.3)';
+            info.textContent = 'Veuillez spécifier un son valide dans l\'URL (ex: ?sound=buzzer)';
+            document.body.style.background = 'linear-gradient(135deg, #434343 0%, #000000 100%)';
+        } else {
+            // Configurer la page selon le son
+            const config = soundConfig[soundName];
+            title.textContent = `🔔 ${config.name}`;
+            icon.textContent = config.icon;
+            info.textContent = config.description + ' - Se déclenche automatiquement';
+            document.body.style.background = config.gradient;
+
+            // Charger le fichier audio
+            audio.src = config.file;
+
+            // Fonction pour jouer le son
+            async function playSound() {
+                try {
+                    await audio.play();
+                    status.textContent = `✅ ${config.name} déclenché avec succès!`;
+                    status.style.background = 'rgba(76, 175, 80, 0.3)';
+                } catch (error) {
+                    console.error('Erreur de lecture:', error);
+                    status.textContent = '⚠️ Cliquez sur le bouton pour activer le son';
+                    status.style.background = 'rgba(255, 152, 0, 0.3)';
+                    playBtn.style.display = 'inline-block';
+                }
+            }
+
+            // Tentative de lecture automatique au chargement
+            window.addEventListener('load', () => {
+                status.textContent = `🔄 Déclenchement de ${config.name}...`;
+                playSound();
+            });
+
+            // Bouton de secours pour les navigateurs qui bloquent l'autoplay
+            playBtn.addEventListener('click', () => {
+                playSound();
+            });
+
+            // Gestion des erreurs de chargement
+            audio.addEventListener('error', (e) => {
+                status.textContent = '❌ Erreur de chargement du fichier audio';
+                status.style.background = 'rgba(244, 67, 54, 0.3)';
+                console.error('Erreur audio:', e);
+            });
+
+            // Confirmation de fin de lecture
+            audio.addEventListener('ended', () => {
+                console.log('Lecture terminée');
+            });
+        }
+    </script>
+</body>
+
+</html>

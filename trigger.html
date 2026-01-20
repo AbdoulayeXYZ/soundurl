@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activer le son</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            transition: background 0.5s ease;
+            cursor: pointer;
+        }
+
+        .container {
+            text-align: center;
+            padding: 60px 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 500px;
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .icon {
+            font-size: 5em;
+            margin: 30px 0;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+        }
+
+        .message {
+            font-size: 1.5em;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+
+        .info {
+            margin-top: 30px;
+            font-size: 1em;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .click-anywhere {
+            margin-top: 20px;
+            font-size: 0.9em;
+            opacity: 0.7;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="container">
+        <h1 id="title">🔔 Sound Player</h1>
+        <div class="icon" id="icon">🔊</div>
+        <div class="message">Cliquez n'importe où</div>
+        <div class="info" id="info">pour déclencher le son</div>
+        <div class="click-anywhere">👆 Cliquez pour continuer</div>
+    </div>
+
+    <audio id="audioPlayer" preload="auto"></audio>
+
+    <script>
+        // Configuration des sons disponibles
+        const soundConfig = {
+            buzzer: {
+                file: 'library/buzzer.mp3',
+                name: 'Buzzer',
+                icon: '🔊',
+                gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+            },
+            notification: {
+                file: 'library/notification.mp3',
+                name: 'Notification',
+                icon: '🔔',
+                gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+            }
+        };
+
+        // Récupérer le paramètre 'sound' de l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const soundName = urlParams.get('sound');
+
+        const audio = document.getElementById('audioPlayer');
+        const title = document.getElementById('title');
+        const icon = document.getElementById('icon');
+        const info = document.getElementById('info');
+        const container = document.getElementById('container');
+
+        // Vérifier si le son existe
+        if (!soundName || !soundConfig[soundName]) {
+            title.textContent = '❌ Erreur';
+            icon.textContent = '⚠️';
+            info.textContent = 'Son non trouvé';
+            document.body.style.background = 'linear-gradient(135deg, #434343 0%, #000000 100%)';
+        } else {
+            // Configurer la page selon le son
+            const config = soundConfig[soundName];
+            title.textContent = config.name;
+            icon.textContent = config.icon;
+            info.textContent = `pour déclencher ${config.name.toLowerCase()}`;
+            document.body.style.background = config.gradient;
+
+            // Charger le fichier audio
+            audio.src = config.file;
+            audio.volume = 1.0;
+
+            // Fonction pour jouer le son au clic
+            const playOnClick = async () => {
+                try {
+                    await audio.play();
+
+                    // Mise à jour visuelle
+                    container.innerHTML = `
+                        <h1>${config.name}</h1>
+                        <div class="icon" style="animation: none; font-size: 6em;">${config.icon}</div>
+                        <div class="message" style="color: #4CAF50;">✅ Son déclenché !</div>
+                    `;
+
+                    // Optionnel : rediriger vers l'accueil après la lecture
+                    audio.addEventListener('ended', () => {
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1000);
+                    });
+
+                } catch (error) {
+                    container.innerHTML = `
+                        <h1>❌ Erreur</h1>
+                        <div class="icon">⚠️</div>
+                        <div class="message">Impossible de lire le son</div>
+                        <div class="info">Veuillez vérifier vos paramètres audio</div>
+                    `;
+                }
+
+                // Retirer l'événement après le premier clic
+                document.body.removeEventListener('click', playOnClick);
+                document.body.style.cursor = 'default';
+            };
+
+            // Ajouter l'événement de clic sur tout le document
+            document.body.addEventListener('click', playOnClick);
+        }
+    </script>
+</body>
+
+</html>

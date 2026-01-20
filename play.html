@@ -169,26 +169,64 @@
             // Fonction pour jouer le son
             async function playSound() {
                 try {
+                    // Forcer le volume à 1
+                    audio.volume = 1.0;
                     await audio.play();
                     status.textContent = `✅ ${config.name} déclenché avec succès!`;
                     status.style.background = 'rgba(76, 175, 80, 0.3)';
+                    playBtn.style.display = 'none';
                 } catch (error) {
                     console.error('Erreur de lecture:', error);
                     status.textContent = '⚠️ Cliquez sur le bouton pour activer le son';
                     status.style.background = 'rgba(255, 152, 0, 0.3)';
                     playBtn.style.display = 'inline-block';
+                    playBtn.textContent = '🔊 Activer le son';
+
+                    // Auto-click après un court délai
+                    setTimeout(() => {
+                        playBtn.focus();
+                    }, 100);
                 }
             }
 
-            // Tentative de lecture automatique au chargement
-            window.addEventListener('load', () => {
-                status.textContent = `🔄 Déclenchement de ${config.name}...`;
-                playSound();
-            });
+            // Tentative de lecture automatique immédiate
+            status.textContent = `🔄 Déclenchement de ${config.name}...`;
+
+            // Essayer de jouer dès que possible
+            const tryAutoplay = async () => {
+                try {
+                    audio.volume = 1.0;
+                    await audio.play();
+                    status.textContent = `✅ ${config.name} déclenché avec succès!`;
+                    status.style.background = 'rgba(76, 175, 80, 0.3)';
+                } catch (error) {
+                    // Si l'autoplay échoue, afficher le bouton
+                    status.textContent = '⚠️ Cliquez sur le bouton pour activer le son';
+                    status.style.background = 'rgba(255, 152, 0, 0.3)';
+                    playBtn.style.display = 'inline-block';
+                    playBtn.textContent = '🔊 Activer le son';
+                }
+            };
+
+            // Essayer l'autoplay dès que le DOM est prêt
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', tryAutoplay);
+            } else {
+                tryAutoplay();
+            }
 
             // Bouton de secours pour les navigateurs qui bloquent l'autoplay
-            playBtn.addEventListener('click', () => {
-                playSound();
+            playBtn.addEventListener('click', async () => {
+                try {
+                    audio.volume = 1.0;
+                    await audio.play();
+                    status.textContent = `✅ ${config.name} déclenché avec succès!`;
+                    status.style.background = 'rgba(76, 175, 80, 0.3)';
+                    playBtn.style.display = 'none';
+                } catch (error) {
+                    status.textContent = '❌ Impossible de lire le son';
+                    status.style.background = 'rgba(244, 67, 54, 0.3)';
+                }
             });
 
             // Gestion des erreurs de chargement
